@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# comment
+
 PSQL="psql --csv -U freecodecamp number_guess --tuples-only -c"
 
 SECRET_NUMBER=$((($RANDOM % 1000) + 1))
@@ -25,7 +27,7 @@ NUMBER_OF_GUESSES=1
 
 while [[ $GUESS != $SECRET_NUMBER ]]
 do
-  if [[ ! $GUESS =~ ^[0-9]+$ ]]
+  if [[ ! $GUESS =~ ^-?[0-9]+$ ]]
   then
     echo "That is not an integer, guess again:"
   elif [[ $GUESS > $SECRET_NUMBER ]]
@@ -41,4 +43,11 @@ do
   NUMBER_OF_GUESSES=$(($NUMBER_OF_GUESSES + 1))
 done
 
-echo "You guessed it in $NUMBER_OF_GUESSES tries. The secret number was $SECRET_NUMBER. Nice job!"
+if [[ $BEST_GAME == 0 || $BEST_GAME > $NUMBER_OF_GUESSES ]]
+then
+  UPDATE_USER_RESULT=$($PSQL "UPDATE users SET best_game = $NUMBER_OF_GUESSES, games_played = games_played + 1 WHERE username = '$USERNAME';")
+else
+  UPDATE_USER_RESULT=$($PSQL "UPDATE users SET games_played = games_played + 1 WHERE username = '$USERNAME';")
+fi
+
+echo "You guessed it in $NUMBER_OF_GUESSES tries. The secret number was $SECRET_NUMBER. Nice job!"`
