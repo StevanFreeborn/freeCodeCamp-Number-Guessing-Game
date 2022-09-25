@@ -20,7 +20,7 @@ else
   echo "Welcome back, $USERNAME! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
 fi
 
-echo "Guess the secret number between 1 and 1000:"
+echo -e "\nGuess the secret number between 1 and 1000:"
 read GUESS
 
 NUMBER_OF_GUESSES=1
@@ -32,10 +32,10 @@ do
     echo "That is not an integer, guess again:"
   elif [[ $GUESS > $SECRET_NUMBER ]]
   then
-    echo "It's lower than that guess again:"
+    echo "It's lower than that, guess again:"
   elif [[ $GUESS < $SECRET_NUMBER ]]
   then
-    echo "It's higher than that guess again:"
+    echo "It's higher than that, guess again:"
   fi
 
   read GUESS
@@ -43,11 +43,11 @@ do
   NUMBER_OF_GUESSES=$(($NUMBER_OF_GUESSES + 1))
 done
 
-if [[ $BEST_GAME == 0 || $BEST_GAME > $NUMBER_OF_GUESSES ]]
+if [[ $BEST_GAME == 0 || -z $BEST_GAME || $BEST_GAME > $NUMBER_OF_GUESSES ]]
 then
   UPDATE_USER_RESULT=$($PSQL "UPDATE users SET best_game = $NUMBER_OF_GUESSES, games_played = games_played + 1 WHERE username = '$USERNAME';")
 else
   UPDATE_USER_RESULT=$($PSQL "UPDATE users SET games_played = games_played + 1 WHERE username = '$USERNAME';")
 fi
 
-echo "You guessed it in $NUMBER_OF_GUESSES tries. The secret number was $SECRET_NUMBER. Nice job!"`
+echo "You guessed it in $NUMBER_OF_GUESSES tries. The secret number was $SECRET_NUMBER. Nice job!"
